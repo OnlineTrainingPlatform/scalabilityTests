@@ -17,8 +17,8 @@ export function sucessful_submit_a_solution_for_lightswitch() {
     })
 
     check(response, {
-        "sucessful_status: Status code is 200": (res) =>
-            res.status === 200
+        "sucessful_status: Status code is 201": (res) =>
+            res.status === 201
     })
 
     return response
