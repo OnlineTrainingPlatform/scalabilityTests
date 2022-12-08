@@ -1,4 +1,4 @@
-export const two_queries_passing = `<?xml version="1.0" encoding="utf-8"?>
+export const light_switch_solution_1 = `<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
 <nta>
 	<declaration>// Place global declarations here.
@@ -131,7 +131,7 @@ press := 0</label>
 	</queries>
 </nta>`
 
-const two_queries_failing = `<?xml version="1.0" encoding="utf-8"?>
+export const light_switch_solution_2 = `<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
 <nta>
 	<declaration>// Place global declarations here.
@@ -264,7 +264,7 @@ press := 0</label>
 	</queries>
 </nta>`
 
-export const one_query_passing_and_one_query_failing = `<?xml version="1.0" encoding="utf-8"?>
+export const light_switch_solution_3 = `<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
 <nta>
 	<declaration>// Place global declarations here.
@@ -392,6 +392,566 @@ press := 0</label>
 		</query>
 		<query>
 			<formula>A[] not deadlock</formula>
+			<comment></comment>
+		</query>
+	</queries>
+</nta>`
+
+export const buzzing_boys_solution_1 = `<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
+<nta>
+	<declaration>const int 	N = 4;         // # Boys
+typedef int[0,N-1] id_t;
+
+broadcast chan start_call[N][N], end_call[N];
+
+bool available[N] = { true, true, true, true };
+
+bool can_call[N][N] = {
+    { false, true, false, false },
+    { true, false, true, false },
+    { false, true, false, true },
+    { false, false, true, false }
+};
+
+bool known_secrets[N][N] = {
+    { true, false, false, false },
+    { false, true, false, false },
+    { false, false, true, true  },
+    { false, false, false, true }
+};
+
+void exchange_secrets(id_t e, id_t id) {
+}
+
+bool everyone_knows_everything() {
+    int i;
+    int j;
+    for (i = 0; i &lt; N; ++i) {
+        for (j = 0; j &lt; N; ++j) {
+            if (!known_secrets[i][j]) {
+                return false;
+            }
+        }
+    }
+    return true;
+}</declaration>
+	<template>
+		<name>Observer</name>
+		<declaration>clock total_timer;
+int call_count = 1;</declaration>
+		<location id="id0" x="0" y="0">
+		</location>
+		<location id="id1" x="280" y="0">
+			<name x="270" y="-34">Finished</name>
+		</location>
+		<init ref="id0"/>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="guard" x="51" y="-25">everyone_knows_everything()</label>
+		</transition>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id0"/>
+			<label kind="select" x="-34" y="-136">e : id_t</label>
+			<label kind="synchronisation" x="-42" y="-119">end_call[e]?</label>
+			<label kind="assignment" x="-42" y="-102">call_count++</label>
+			<nail x="-76" y="-76"/>
+			<nail x="85" y="-76"/>
+		</transition>
+	</template>
+	<template>
+		<name x="5" y="5">Boy</name>
+		<parameter>const id_t id</parameter>
+		<declaration>clock call_timer;
+id_t talking_to;</declaration>
+		<location id="id2" x="76" y="246">
+			<name x="51" y="263">Available</name>
+		</location>
+		<location id="id3" x="76" y="68">
+			<name x="93" y="26">Busy</name>
+			<label kind="invariant" x="93" y="43">call_timer &lt;= 60</label>
+		</location>
+		<init ref="id2"/>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id2"/>
+			<label kind="synchronisation" x="-399" y="153">end_call[id]?</label>
+			<label kind="assignment" x="-433" y="178">available[id] = true</label>
+			<nail x="-297" y="0"/>
+			<nail x="-297" y="314"/>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id2"/>
+			<label kind="guard" x="-289" y="136">call_timer == 60</label>
+			<label kind="synchronisation" x="-289" y="153">end_call[talking_to]!</label>
+			<label kind="assignment" x="-289" y="170">available[id] = true</label>
+			<nail x="-153" y="68"/>
+			<nail x="-153" y="246"/>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id3"/>
+			<label kind="select" x="-17" y="84">e : id_t</label>
+			<label kind="guard" x="-136" y="102">available[e] &amp;&amp; can_call[id][e]</label>
+			<label kind="synchronisation" x="-34" y="127">start_call[id][e]!</label>
+			<label kind="assignment" x="-85" y="152">exchange_secrets(e, id),
+available[id] = false,
+call_timer = 0,
+talking_to = e</label>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id3"/>
+			<label kind="select" x="178" y="102">e : id_t</label>
+			<label kind="synchronisation" x="161" y="127">start_call[e][id]?</label>
+			<label kind="assignment" x="161" y="153">available[id] = false,
+call_timer = 0,
+talking_to = e</label>
+			<nail x="144" y="246"/>
+			<nail x="144" y="68"/>
+		</transition>
+	</template>
+	<system>// Place template instantiations here.
+Boy0 = Boy(0);
+Boy1 = Boy(1);
+Boy2 = Boy(2);
+Boy3 = Boy(3);
+Observer0 = Observer();
+// List one or more processes to be composed into a system.
+system Boy0, Boy1, Boy2, Boy3, Observer0;
+    </system>
+	<queries>
+		<query>
+			<formula>E&lt;&gt; not (Boy0.Available and Boy1.Busy)</formula>
+			<comment></comment>
+		</query>
+		<query>
+			<formula>E&lt;&gt; Observer0.Finished &amp;&amp; Observer0.call_count == 4</formula>
+			<comment></comment>
+		</query>
+		<query>
+			<formula>E&lt;&gt; not deadlock</formula>
+			<comment></comment>
+		</query>
+	</queries>
+</nta>`
+export const buzzing_boys_solution_2 = `<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
+<nta>
+	<declaration>const int 	N = 4;         // # Boys
+typedef int[0,N-1] id_t;
+
+broadcast chan start_call[N][N], end_call[N];
+
+bool available[N] = { true, true, true, true };
+
+bool can_call[N][N] = {
+    { false, true, false, false },
+    { true, false, true, false },
+    { false, true, false, true },
+    { false, false, true, false }
+};
+
+bool known_secrets[N][N] = {
+    { true, false, false, false },
+    { false, true, false, false },
+    { false, false, true, false },
+    { false, false, false, true }
+};
+
+void exchange_secrets(id_t e, id_t id) {
+    int i;
+    for (i = 0; i &lt; N; ++i) {
+        known_secrets[e][i] |= known_secrets[id][i];
+        known_secrets[id][i] = known_secrets[e][i];
+    }
+}
+
+bool everyone_knows_everything() {
+    int i;
+    int j;
+    for (i = 0; i &lt; N; ++i) {
+        for (j = 0; j &lt; N; ++j) {
+            if (!known_secrets[i][j]) {
+                return false;
+            }
+        }
+    }
+    return true;
+}</declaration>
+	<template>
+		<name>Observer</name>
+		<declaration>clock total_timer;
+int call_count = 1;</declaration>
+		<location id="id0" x="0" y="0">
+		</location>
+		<location id="id1" x="280" y="0">
+			<name x="270" y="-34">Finished</name>
+		</location>
+		<init ref="id0"/>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="guard" x="51" y="-25">everyone_knows_everything()</label>
+		</transition>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id0"/>
+			<label kind="select" x="-34" y="-136">e : id_t</label>
+			<label kind="synchronisation" x="-42" y="-119">end_call[e]?</label>
+			<label kind="assignment" x="-42" y="-102">call_count++</label>
+			<nail x="-76" y="-76"/>
+			<nail x="85" y="-76"/>
+		</transition>
+	</template>
+	<template>
+		<name x="5" y="5">Boy</name>
+		<parameter>const id_t id</parameter>
+		<declaration>clock call_timer;
+id_t talking_to;</declaration>
+		<location id="id2" x="76" y="246">
+			<name x="51" y="263">Available</name>
+		</location>
+		<location id="id3" x="76" y="68">
+			<name x="93" y="26">Busy</name>
+			<label kind="invariant" x="93" y="43">call_timer &lt;= 60</label>
+		</location>
+		<init ref="id2"/>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id2"/>
+			<label kind="synchronisation" x="-399" y="153">end_call[id]?</label>
+			<label kind="assignment" x="-433" y="178">available[id] = true</label>
+			<nail x="-297" y="0"/>
+			<nail x="-297" y="314"/>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id2"/>
+			<label kind="guard" x="-289" y="136">call_timer == 60</label>
+			<label kind="synchronisation" x="-289" y="153">end_call[talking_to]!</label>
+			<label kind="assignment" x="-289" y="170">available[id] = true</label>
+			<nail x="-153" y="68"/>
+			<nail x="-153" y="246"/>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id3"/>
+			<label kind="select" x="-17" y="84">e : id_t</label>
+			<label kind="guard" x="-136" y="102">available[e] &amp;&amp; can_call[id][e]</label>
+			<label kind="synchronisation" x="-34" y="127">start_call[id][e]!</label>
+			<label kind="assignment" x="-85" y="152">exchange_secrets(e, id),
+available[id] = false,
+call_timer = 0,
+talking_to = e</label>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id3"/>
+			<label kind="select" x="178" y="102">e : id_t</label>
+			<label kind="synchronisation" x="161" y="127">start_call[e][id]?</label>
+			<label kind="assignment" x="161" y="153">available[id] = false,
+call_timer = 0,
+talking_to = e</label>
+			<nail x="144" y="246"/>
+			<nail x="144" y="68"/>
+		</transition>
+	</template>
+	<system>// Place template instantiations here.
+Boy0 = Boy(0);
+Boy1 = Boy(1);
+Boy2 = Boy(2);
+Boy3 = Boy(3);
+Observer0 = Observer();
+// List one or more processes to be composed into a system.
+system Boy0, Boy1, Boy2, Boy3, Observer0;
+    </system>
+	<queries>
+		<query>
+			<formula>E&lt;&gt; not (Boy0.Available and Boy1.Busy)</formula>
+			<comment></comment>
+		</query>
+		<query>
+			<formula>E&lt;&gt; Observer0.Finished &amp;&amp; Observer0.call_count == 4</formula>
+			<comment></comment>
+		</query>
+		<query>
+			<formula>E&lt;&gt; not deadlock</formula>
+			<comment></comment>
+		</query>
+	</queries>
+</nta>`
+export const buzzing_boys_solution_3 = `<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
+<nta>
+	<declaration>const int 	N = 4;         // # Boys
+typedef int[0,N-1] id_t;
+
+broadcast chan start_call[N][N], end_call[N];
+
+bool available[N] = { true, true, true, true };
+
+bool can_call[N][N] = {
+    { false, true, false, false },
+    { true, false, true, false },
+    { false, true, false, true },
+    { false, false, true, false }
+};
+
+bool known_secrets[N][N] = {
+    { true, false, false, false },
+    { false, true, false, false },
+    { false, false, true, false },
+    { false, false, false, true }
+};
+
+void exchange_secrets(id_t e, id_t id) {
+    int i;
+    for (i = 0; i &lt; N; ++i) {
+        known_secrets[e][i] |= known_secrets[id][i];
+        known_secrets[id][i] = known_secrets[e][i];
+    }
+}
+
+bool everyone_knows_everything() {
+    int i;
+    int j;
+    for (i = 0; i &lt; N; ++i) {
+        for (j = 0; j &lt; N; ++j) {
+            if (!known_secrets[i][j]) {
+                return false;
+            }
+        }
+    }
+    return true;
+}</declaration>
+	<template>
+		<name>Observer</name>
+		<declaration>clock total_timer;
+int call_count = 1;</declaration>
+		<location id="id0" x="0" y="0">
+		</location>
+		<location id="id1" x="280" y="0">
+			<name x="270" y="-34">Finished</name>
+		</location>
+		<init ref="id0"/>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="guard" x="51" y="-25">everyone_knows_everything()</label>
+		</transition>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id0"/>
+			<label kind="select" x="-34" y="-136">e : id_t</label>
+			<label kind="synchronisation" x="-42" y="-119">end_call[e]?</label>
+			<label kind="assignment" x="-42" y="-102">call_count++</label>
+			<nail x="-76" y="-76"/>
+			<nail x="85" y="-76"/>
+		</transition>
+	</template>
+	<template>
+		<name x="5" y="5">Boy</name>
+		<parameter>const id_t id</parameter>
+		<declaration>clock call_timer;
+id_t talking_to;</declaration>
+		<location id="id2" x="76" y="246">
+			<name x="51" y="263">Available</name>
+		</location>
+		<location id="id3" x="76" y="68">
+			<name x="93" y="26">Busy</name>
+			<label kind="invariant" x="93" y="43">call_timer &lt;= 60</label>
+		</location>
+		<init ref="id2"/>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id2"/>
+			<label kind="synchronisation" x="-399" y="153">end_call[id]?</label>
+			<label kind="assignment" x="-433" y="178">available[id] = true</label>
+			<nail x="-297" y="0"/>
+			<nail x="-297" y="314"/>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id2"/>
+			<label kind="guard" x="-289" y="136">call_timer == 60</label>
+			<label kind="synchronisation" x="-289" y="153">end_call[talking_to]!</label>
+			<label kind="assignment" x="-289" y="170">available[id] = true</label>
+			<nail x="-153" y="68"/>
+			<nail x="-153" y="246"/>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id3"/>
+			<label kind="select" x="178" y="102">e : id_t</label>
+			<label kind="synchronisation" x="161" y="127">start_call[e][id]?</label>
+			<label kind="assignment" x="161" y="153">available[id] = false,
+call_timer = 0,
+talking_to = e</label>
+			<nail x="144" y="246"/>
+			<nail x="144" y="68"/>
+		</transition>
+	</template>
+	<system>// Place template instantiations here.
+Boy0 = Boy(0);
+Boy1 = Boy(1);
+Boy2 = Boy(2);
+Boy3 = Boy(3);
+Observer0 = Observer();
+// List one or more processes to be composed into a system.
+system Boy0, Boy1, Boy2, Boy3, Observer0;
+    </system>
+	<queries>
+		<query>
+			<formula>E&lt;&gt; not (Boy0.Available and Boy1.Busy)</formula>
+			<comment></comment>
+		</query>
+		<query>
+			<formula>E&lt;&gt; Observer0.Finished &amp;&amp; Observer0.call_count == 4</formula>
+			<comment></comment>
+		</query>
+		<query>
+			<formula>E&lt;&gt; not deadlock</formula>
+			<comment></comment>
+		</query>
+	</queries>
+</nta>`
+export const buzzing_boys_solution_4 = `<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
+<nta>
+	<declaration>const int 	N = 4;         // # Boys
+typedef int[0,N-1] id_t;
+
+broadcast chan start_call[N][N], end_call[N];
+
+bool available[N] = { true, true, true, true };
+
+bool can_call[N][N] = {
+    { false, true, false, false },
+    { true, false, true, false },
+    { false, true, false, true },
+    { false, false, true, false }
+};
+
+bool known_secrets[N][N] = {
+    { true, false, false, false },
+    { false, true, false, false },
+    { false, false, true, false },
+    { false, false, false, true }
+};
+
+void exchange_secrets(id_t e, id_t id) {
+    int i;
+    for (i = 0; i &lt; N; ++i) {
+        known_secrets[e][i] |= known_secrets[id][i];
+        known_secrets[id][i] = known_secrets[e][i];
+    }
+}
+
+bool everyone_knows_everything() {
+    int i;
+    int j;
+    for (i = 0; i &lt; N; ++i) {
+        for (j = 0; j &lt; N; ++j) {
+            if (!known_secrets[i][j]) {
+                return false;
+            }
+        }
+    }
+    return true;
+}</declaration>
+	<template>
+		<name>Observer</name>
+		<declaration>clock total_timer;
+int call_count = 1;</declaration>
+		<location id="id0" x="0" y="0">
+		</location>
+		<location id="id1" x="280" y="0">
+			<name x="270" y="-34">Finished</name>
+		</location>
+		<init ref="id0"/>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="guard" x="51" y="-25">everyone_knows_everything()</label>
+		</transition>
+	</template>
+	<template>
+		<name x="5" y="5">Boy</name>
+		<parameter>const id_t id</parameter>
+		<declaration>clock call_timer;
+id_t talking_to;</declaration>
+		<location id="id2" x="76" y="246">
+			<name x="51" y="263">Available</name>
+		</location>
+		<location id="id3" x="76" y="68">
+			<name x="93" y="26">Busy</name>
+			<label kind="invariant" x="93" y="43">call_timer &lt;= 60</label>
+		</location>
+		<init ref="id2"/>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id2"/>
+			<label kind="synchronisation" x="-399" y="153">end_call[id]?</label>
+			<label kind="assignment" x="-433" y="178">available[id] = true</label>
+			<nail x="-297" y="0"/>
+			<nail x="-297" y="314"/>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id2"/>
+			<label kind="guard" x="-289" y="136">call_timer == 60</label>
+			<label kind="synchronisation" x="-289" y="153">end_call[talking_to]!</label>
+			<label kind="assignment" x="-289" y="170">available[id] = true</label>
+			<nail x="-153" y="68"/>
+			<nail x="-153" y="246"/>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id3"/>
+			<label kind="select" x="-17" y="84">e : id_t</label>
+			<label kind="guard" x="-136" y="102">available[e] &amp;&amp; can_call[id][e]</label>
+			<label kind="synchronisation" x="-34" y="127">start_call[id][e]!</label>
+			<label kind="assignment" x="-85" y="152">exchange_secrets(e, id),
+available[id] = false,
+call_timer = 0,
+talking_to = e</label>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id3"/>
+			<label kind="select" x="178" y="102">e : id_t</label>
+			<label kind="synchronisation" x="161" y="127">start_call[e][id]?</label>
+			<label kind="assignment" x="161" y="153">available[id] = false,
+call_timer = 0,
+talking_to = e</label>
+			<nail x="144" y="246"/>
+			<nail x="144" y="68"/>
+		</transition>
+	</template>
+	<system>// Place template instantiations here.
+Boy0 = Boy(0);
+Boy1 = Boy(1);
+Boy2 = Boy(2);
+Boy3 = Boy(3);
+Observer0 = Observer();
+// List one or more processes to be composed into a system.
+system Boy0, Boy1, Boy2, Boy3, Observer0;
+    </system>
+	<queries>
+		<query>
+			<formula>E&lt;&gt; not (Boy0.Available and Boy1.Busy)</formula>
+			<comment></comment>
+		</query>
+		<query>
+			<formula>E&lt;&gt; Observer0.Finished &amp;&amp; Observer0.call_count == 4</formula>
+			<comment></comment>
+		</query>
+		<query>
+			<formula>E&lt;&gt; not deadlock</formula>
 			<comment></comment>
 		</query>
 	</queries>

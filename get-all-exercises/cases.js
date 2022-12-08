@@ -3,7 +3,7 @@ import http from "k6/http"
 import { initCases } from "../index.js"
 
 export function sucessful_get_all_exercises() {
-    const url = `http://172.28.198.118/api/v1/exercises`
+    const url = `http://142.93.107.98/api/v1/exercises`
     const response = http.get(url)
 
     check(response, {
