@@ -1,0 +1,9 @@
+PING 142.93.107.98 (142.93.107.98) 56(84) bytes of data.
+64 bytes from 142.93.107.98: icmp_seq=1 ttl=52 time=29.6 ms
+64 bytes from 142.93.107.98: icmp_seq=2 ttl=52 time=28.7 ms
+64 bytes from 142.93.107.98: icmp_seq=3 ttl=52 time=28.7 ms
+64 bytes from 142.93.107.98: icmp_seq=4 ttl=52 time=28.6 ms
+
+--- 142.93.107.98 ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3006ms
+rtt min/avg/max/mdev = 28.580/28.878/29.567/0.399 ms
