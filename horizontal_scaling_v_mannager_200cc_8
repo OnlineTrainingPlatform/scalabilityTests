@@ -1,0 +1,29 @@
+PING 167.71.59.132 (167.71.59.132) 56(84) bytes of data.
+64 bytes from 167.71.59.132: icmp_seq=1 ttl=52 time=29.8 ms
+64 bytes from 167.71.59.132: icmp_seq=2 ttl=52 time=57.4 ms
+64 bytes from 167.71.59.132: icmp_seq=3 ttl=52 time=28.1 ms
+64 bytes from 167.71.59.132: icmp_seq=4 ttl=52 time=29.8 ms
+
+--- 167.71.59.132 ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3005ms
+rtt min/avg/max/mdev = 28.057/36.278/57.402/12.217 ms
+
+          /\      |‾‾| /‾‾/   /‾‾/   
+     /\  /  \     |  |/  /   /  /    
+    /  \/    \    |     (   /   ‾‾\  
+   /          \   |  |\  \ |  (‾)  | 
+  / __________ \  |__| \__\ \_____/ .io
+
+  execution: local
+     script: verify-solution/scalability_test_2_2.js
+     output: -
+
+  scenarios: (100.00%) 1 scenario, 200 max VUs, 18m30s max duration (incl. graceful stop):
+           * constant_request_rate: 2.78 iterations/s for 18m0s (maxVUs: 200, gracefulStop: 30s)
+
+
+running (00m01.0s), 200/200 VUs, 0 complete and 0 interrupted iterations
+constant_request_rate   [   0% ] 003/200 VUs  00m01.0s/18m0s  2.78 iters/s
+
+running (00m02.0s), 200/200 VUs, 0 complete and 0 interrupted iterations
+constant_request_rate   [   0% ] 006/200 VUs  00m02.0s/18m0s  2.78 iters/s

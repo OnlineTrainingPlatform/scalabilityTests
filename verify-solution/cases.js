@@ -12,7 +12,7 @@ import {
 } from "./solutions.js"
 
 export function successful_verify_random_lightswitch_or_buzzing_boys_solution() {
-    const url = `http://142.93.107.98/api/v1/verifiers/verifyta`
+    const url = `http://167.71.59.132/api/v1/verifiers/verifyta`
     const solutions = [ 
         light_switch_solution_1,
         light_switch_solution_2,
